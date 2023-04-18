@@ -32,7 +32,7 @@ export class TodosAccess {
   }
 
   async createTodoItem(todoItem: TodoItem): Promise<TodoItem> {
-    console.log(`Creating a To-do Item with id ${todoItem.todoId}`)
+    console.log(`Creating a To-do Item with id ${todoItem.id}`)
 
     await this.docClient
       .put({

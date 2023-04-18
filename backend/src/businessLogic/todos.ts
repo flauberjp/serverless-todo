@@ -23,7 +23,7 @@ export async function createGroup(
 
   return await todosAccess.createTodoItem({
     userId: userId,
-    todoId: itemId,
+    id: itemId,
     createdAt: new Date().toISOString(),
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
@@ -32,8 +32,20 @@ export async function createGroup(
   })
 }
 
-export async function createTodo() {
-  // TODO implement
+export async function createTodo(
+  createTodoRequest: CreateTodoRequest,
+  userId: string
+) {
+  const itemId = uuid.v4()
+  return await todosAccess.createTodoItem({
+    userId: userId,
+    id: itemId,
+    createdAt: new Date().toISOString(),
+    name: createTodoRequest.name,
+    dueDate: createTodoRequest.dueDate,
+    done: false,
+    attachmentUrl: ''
+  })
 }
 
 export async function deleteTodo() {
