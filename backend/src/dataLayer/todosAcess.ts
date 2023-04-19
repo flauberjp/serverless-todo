@@ -1,14 +1,14 @@
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 // import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-// import { createLogger } from '../utils/logger'
+import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 // import { TodoUpdate } from '../models/TodoUpdate'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
-// const logger = createLogger('TodosAccess')
+const logger = createLogger('TodosAccess')
 
 // TODO: Implement the dataLayer logic
 
@@ -19,8 +19,8 @@ export class TodosAccess {
   ) {}
 
   async getAllTodosItem(): Promise<TodoItem[]> {
-    console.log("Getting all To-do's Item")
-    console.log('todosTable', this.todosTable)
+    logger.info("Getting all To-do's Item")
+    logger.info('todosTable', this.todosTable)
 
     const result = await this.docClient
       .scan({
@@ -28,7 +28,7 @@ export class TodosAccess {
       })
       .promise()
     const items = result.Items
-    console.log("To-do's Item", JSON.stringify(items))
+    logger.info("To-do's Item", JSON.stringify(items))
     return items as TodoItem[]
   }
 
@@ -42,7 +42,7 @@ export class TodosAccess {
       })
       .promise()
 
-    console.log('Get TODO item: ', result.Item)
+    logger.info('Get TODO item: ', result.Item)
     return result.Item
   }
 
@@ -56,13 +56,11 @@ export class TodosAccess {
     userId: string
   ): Promise<boolean> {
     const result = await this.getTodoItem(todoId)
-    console.log('userId', userId)
-    console.log('result.userId', result.userId)
     return result.userId === userId
   }
 
   async createTodoItem(todoItem: TodoItem): Promise<TodoItem> {
-    console.log(`Creating a To-do Item with id ${todoItem.id}`)
+    logger.info(`Creating a To-do Item with id ${todoItem.id}`)
 
     await this.docClient
       .put({
@@ -71,7 +69,7 @@ export class TodosAccess {
       })
       .promise()
 
-    console.info('To-do Item', todoItem)
+    logger.info('To-do Item', todoItem)
     return todoItem
   }
 
@@ -79,7 +77,7 @@ export class TodosAccess {
     todoId: string,
     updateTodoRequest: UpdateTodoRequest
   ): Promise<TodoItem> {
-    console.info(
+    logger.info(
       `Updating To-do Item with id ${todoId}. New field values: ${JSON.stringify(
         updateTodoRequest
       )}`
@@ -110,12 +108,12 @@ export class TodosAccess {
 
 function createDynamoDBClient() {
   if (process.env.IS_OFFLINE === 'true') {
-    console.log('Creating a local DynamoDB instance')
+    logger.info('Creating a local DynamoDB instance')
     return new AWS.DynamoDB.DocumentClient({
       region: 'localhost',
       endpoint: 'http://localhost:8000'
     })
   }
-  console.log('Creating an AWS DynamoDB instance')
+  logger.info('Creating an AWS DynamoDB instance')
   return new XAWS.DynamoDB.DocumentClient()
 }
