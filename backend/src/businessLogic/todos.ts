@@ -1,3 +1,4 @@
+import { UpdateTodoRequest } from './../requests/UpdateTodoRequest'
 import { TodosAccess } from '../dataLayer/todosAcess'
 // import { AttachmentUtils } from '../helpers/attachmentUtils'
 import { TodoItem } from '../models/TodoItem'
@@ -12,24 +13,20 @@ const todosAccess = new TodosAccess()
 export async function getAllTodosItem(): Promise<TodoItem[]> {
   return todosAccess.getAllTodosItem()
 }
-export async function createGroup(
-  createTodoRequest: CreateTodoRequest,
-  JwtToken: string
-): Promise<TodoItem> {
-  const itemId = uuid.v4()
-  console.log('JwtToken', JwtToken)
-  //const userId = getUserId(JwtToken)
-  const userId = ''
 
-  return await todosAccess.createTodoItem({
-    userId: userId,
-    id: itemId,
-    createdAt: new Date().toISOString(),
-    name: createTodoRequest.name,
-    dueDate: createTodoRequest.dueDate,
-    done: false,
-    attachmentUrl: ''
-  })
+export async function getTodoItem(todoId: string): Promise<TodoItem> {
+  return todosAccess.getTodoItem(todoId)
+}
+
+export async function todoItemExist(todoId: string): Promise<boolean> {
+  return await todosAccess.todoItemExist(todoId)
+}
+
+export async function todoItemBelongsToUser(
+  todoId: string,
+  userId: string
+): Promise<boolean> {
+  return await todosAccess.todoItemBelongsToUser(todoId, userId)
 }
 
 export async function createTodo(
@@ -48,6 +45,13 @@ export async function createTodo(
   })
 }
 
+export async function updateTodo(
+  todoId: string,
+  updateTodoRequest: UpdateTodoRequest
+) {
+  return await todosAccess.updateTodoItem(todoId, updateTodoRequest)
+}
+
 export async function deleteTodo() {
   // TODO implement
 }
@@ -57,9 +61,5 @@ export async function createAttachmentPresignedUrl() {
 }
 
 export async function getTodosForUser() {
-  // TODO implement
-}
-
-export async function updateTodo() {
   // TODO implement
 }
