@@ -1,12 +1,12 @@
-import { UpdateTodoRequest } from './../requests/UpdateTodoRequest'
 import { TodosAccess } from '../dataLayer/todosAcess'
 // import { AttachmentUtils } from '../helpers/attachmentUtils'
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
-// import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 // import { createLogger } from '../utils/logger'
 import * as uuid from 'uuid'
 // import * as createError from 'http-errors'
+import { TodoUpdate } from '../models/TodoUpdate'
 
 const todosAccess = new TodosAccess()
 
@@ -49,7 +49,12 @@ export async function updateTodo(
   todoId: string,
   updateTodoRequest: UpdateTodoRequest
 ) {
-  return await todosAccess.updateTodoItem(todoId, updateTodoRequest)
+  const todoUpdate: TodoUpdate = {
+    name: updateTodoRequest.name,
+    dueDate: updateTodoRequest.dueDate,
+    done: updateTodoRequest.done
+  }
+  return await todosAccess.updateTodoItem(todoId, todoUpdate)
 }
 
 export async function deleteTodo() {

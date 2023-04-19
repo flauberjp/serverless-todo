@@ -1,10 +1,8 @@
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
-// import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { createLogger } from '../utils/logger'
 import { TodoItem } from '../models/TodoItem'
-import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
-// import { TodoUpdate } from '../models/TodoUpdate'
+import { TodoUpdate } from '../models/TodoUpdate'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
@@ -75,11 +73,11 @@ export class TodosAccess {
 
   async updateTodoItem(
     todoId: string,
-    updateTodoRequest: UpdateTodoRequest
+    todoUpdate: TodoUpdate
   ): Promise<TodoItem> {
     logger.info(
       `Updating To-do Item with id ${todoId}. New field values: ${JSON.stringify(
-        updateTodoRequest
+        todoUpdate
       )}`
     )
 
@@ -94,9 +92,9 @@ export class TodosAccess {
           '#todoName': 'name'
         },
         ExpressionAttributeValues: {
-          ':n': updateTodoRequest.name,
-          ':d': updateTodoRequest.dueDate,
-          ':r': updateTodoRequest.done
+          ':n': todoUpdate.name,
+          ':d': todoUpdate.dueDate,
+          ':r': todoUpdate.done
         }
       })
       .promise()
