@@ -57,8 +57,8 @@ export async function updateTodo(
   return await todosAccess.updateTodoItem(todoId, todoUpdate)
 }
 
-export async function deleteTodo() {
-  // TODO implement
+export async function deleteTodo(todoId: string) {
+  return await todosAccess.deleteTodoItem(todoId)
 }
 
 export async function createAttachmentPresignedUrl() {

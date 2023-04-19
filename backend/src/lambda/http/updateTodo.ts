@@ -17,12 +17,12 @@ const logger = createLogger('TodosAccess')
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('event', event)
+    logger.info('event', event)
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
 
     if (await todoItemExist(todoId)) {
-      console.info(`TODO item with id ${todoId} exist!`)
+      logger.info(`TODO item with id ${todoId} exist!`)
     } else {
       return {
         statusCode: 404,
@@ -36,7 +36,7 @@ export const handler = middy(
     }
 
     if (await todoItemBelongsToUser(todoId, userId)) {
-      console.info(
+      logger.info(
         `TODO item with id ${todoId} belongs to user which id is  ${userId} !`
       )
     } else {
