@@ -58,7 +58,7 @@ export class TodosAccess {
   }
 
   async createTodoItem(todoItem: TodoItem): Promise<TodoItem> {
-    logger.info(`Creating a To-do Item with id ${todoItem.id}`)
+    logger.info(`Creating a To-do Item with id ${todoItem.todoId}`)
 
     await this.docClient
       .put({
