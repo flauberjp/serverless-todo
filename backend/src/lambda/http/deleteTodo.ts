@@ -16,7 +16,7 @@ const logger = createLogger('TodosAccess')
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    logger.info(`event: ${event}`)
+    logger.info(`event: ${JSON.stringify(event)}`)
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
 
