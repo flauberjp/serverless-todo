@@ -19,12 +19,11 @@ export const s3 = new AWS.S3({
   signatureVersion: 'v4'
 })
 
-export async function getTodoItem(todoId: string): Promise<TodoItem> {
-  return todosAccess.getTodoItem(todoId)
-}
-
-export async function todoItemExist(todoId: string): Promise<boolean> {
-  return await todosAccess.todoItemExist(todoId)
+export async function todoItemExist(
+  userId: string,
+  todoId: string
+): Promise<boolean> {
+  return await todosAccess.todoItemExist(userId, todoId)
 }
 
 export async function todoItemBelongsToUser(
@@ -51,6 +50,7 @@ export async function createTodo(
 }
 
 export async function updateTodo(
+  userId: string,
   todoId: string,
   updateTodoRequest: UpdateTodoRequest
 ) {
@@ -59,11 +59,11 @@ export async function updateTodo(
     dueDate: updateTodoRequest.dueDate,
     done: updateTodoRequest.done
   }
-  return await todosAccess.updateTodoItem(todoId, todoUpdate)
+  return await todosAccess.updateTodoItem(userId, todoId, todoUpdate)
 }
 
-export async function deleteTodo(todoId: string) {
-  return await todosAccess.deleteTodoItem(todoId)
+export async function deleteTodo(userId: string, todoId: string) {
+  return await todosAccess.deleteTodoItem(userId, todoId)
 }
 
 export function createAttachmentPresignedUrl(imageName: string): string {

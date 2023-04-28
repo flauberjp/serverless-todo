@@ -20,7 +20,7 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
 
-    if (await todoItemExist(todoId)) {
+    if (await todoItemExist(userId, todoId)) {
       logger.info(`TODO item with id ${todoId} exist!`)
     } else {
       return {
@@ -50,7 +50,7 @@ export const handler = middy(
       }
     }
 
-    await deleteTodo(todoId)
+    await deleteTodo(userId, todoId)
 
     logger.info(`Deleted item: ${todoId}`)
 

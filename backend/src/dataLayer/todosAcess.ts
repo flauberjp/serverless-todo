@@ -36,11 +36,12 @@ export class TodosAccess {
     return items as TodoItem[]
   }
 
-  async getTodoItem(todoId: string): Promise<TodoItem> {
+  async getTodoItem(userId: string, todoId: string): Promise<TodoItem> {
     const result = await this.docClient
       .get({
         TableName: this.todosTable,
         Key: {
+          userId: userId,
           todoId: todoId
         }
       })
@@ -50,8 +51,8 @@ export class TodosAccess {
     return result.Item
   }
 
-  async todoItemExist(todoId: string): Promise<boolean> {
-    const result = await this.getTodoItem(todoId)
+  async todoItemExist(userId: string, todoId: string): Promise<boolean> {
+    const result = await this.getTodoItem(userId, todoId)
     return !!result
   }
 
@@ -59,7 +60,7 @@ export class TodosAccess {
     todoId: string,
     userId: string
   ): Promise<boolean> {
-    const result = await this.getTodoItem(todoId)
+    const result = await this.getTodoItem(userId, todoId)
     return result.userId === userId
   }
 
@@ -78,6 +79,7 @@ export class TodosAccess {
   }
 
   async updateTodoItem(
+    userId: string,
     todoId: string,
     todoUpdate: TodoUpdate
   ): Promise<TodoItem> {
@@ -91,6 +93,7 @@ export class TodosAccess {
       .update({
         TableName: this.todosTable,
         Key: {
+          userId: userId,
           todoId: todoId
         },
         UpdateExpression: 'set #todoName = :n, duedate = :d, done = :r',
@@ -105,21 +108,24 @@ export class TodosAccess {
       })
       .promise()
 
-    console.info('To-do Item updated!')
-    return this.getTodoItem(todoId)
+    logger.info('To-do Item updated!')
+    return this.getTodoItem(userId, todoId)
   }
 
-  async deleteTodoItem(todoId: string): Promise<void> {
+  async deleteTodoItem(userId: string, todoId: string): Promise<void> {
     logger.info(`Deleting To-do Item with id ${todoId}`)
 
-    await this.docClient
-      .delete({
-        TableName: this.todosTable,
-        Key: {
-          todoId: todoId
-        }
-      })
-      .promise()
+    var params = {
+      TableName: this.todosTable,
+      Key: {
+        userId: userId,
+        todoId: todoId
+      }
+    }
+
+    logger.info(`delete params: ${JSON.stringify(params)}`)
+
+    await this.docClient.delete(params).promise()
 
     logger.info('To-do Item deleted!')
   }

@@ -12,15 +12,13 @@ const logger = createLogger('TodosAccess')
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('event', event)
+    logger.info(`event ${JSON.stringify(event)}`)
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
     const imageName = userId + '_' + todoId
 
     const url = createAttachmentPresignedUrl(imageName)
 
-    logger.debug('function: createAttachmentPresignedUrl')
-    logger.debug('url', url)
     return {
       statusCode: 200,
       body: JSON.stringify({

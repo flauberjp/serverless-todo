@@ -17,11 +17,11 @@ const logger = createLogger('TodosAccess')
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    logger.info('event', event)
+    logger.info(`event: ${JSON.stringify(event)}`)
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
 
-    if (await todoItemExist(todoId)) {
+    if (await todoItemExist(userId, todoId)) {
       logger.info(`TODO item with id ${todoId} exist!`)
     } else {
       return {
@@ -37,7 +37,7 @@ export const handler = middy(
 
     if (await todoItemBelongsToUser(todoId, userId)) {
       logger.info(
-        `TODO item with id ${todoId} belongs to user which id is  ${userId} !`
+        `TODO item with id ${todoId} belongs to user which id is  ${userId}!`
       )
     } else {
       return {
@@ -53,7 +53,7 @@ export const handler = middy(
 
     const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
 
-    const updatedItem = await updateTodo(todoId, updatedTodo)
+    const updatedItem = await updateTodo(userId, todoId, updatedTodo)
 
     logger.info(`Updated item: ${updatedItem}`)
 
