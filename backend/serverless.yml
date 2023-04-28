@@ -20,7 +20,7 @@ provider:
 
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
-    TODOS_USER_ID_INDEX: UserIdIndex-${self:provider.stage}
+    TODOS_CREATED_AT_INDEX: CreatedAtIndex-${self:provider.stage}
     ATTACHMENT_S3_BUCKET: flauberjp-serverless-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
@@ -137,11 +137,11 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
           - AttributeName: todoId
             AttributeType: S
-          - AttributeName: dueDate
-            AttributeType: S
-          - AttributeName: userId
+          - AttributeName: createdAt
             AttributeType: S
         KeySchema:
           - AttributeName: userId
@@ -149,16 +149,16 @@ resources:
           - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.TODOS_TABLE}
         LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TODOS_USER_ID_INDEX}
+          - IndexName: ${self:provider.environment.TODOS_CREATED_AT_INDEX}
             KeySchema:
               - AttributeName: userId
                 KeyType: HASH
-              - AttributeName: dueDate
+              - AttributeName: createdAt
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-        TableName: ${self:provider.environment.TODOS_TABLE}
 
     AttachmentsBucket:
       Type: AWS::S3::Bucket

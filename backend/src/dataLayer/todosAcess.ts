@@ -8,8 +8,8 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 const logger = createLogger('TodosAccess')
 
-const todosUserIdIndex = process.env.TODOS_USER_ID_INDEX
-logger.info(`todosUserIdIndex name: ${todosUserIdIndex}`)
+const todosCreatedAtIndex = process.env.TODOS_CREATED_AT_INDEX
+logger.info(`todosCreatedAtIndex name: ${todosCreatedAtIndex}`)
 
 export class TodosAccess {
   constructor(
@@ -24,7 +24,7 @@ export class TodosAccess {
     const result = await this.docClient
       .query({
         TableName: this.todosTable,
-        IndexName: todosUserIdIndex,
+        IndexName: todosCreatedAtIndex,
         KeyConditionExpression: 'userId = :userId',
         ExpressionAttributeValues: {
           ':userId': userId
