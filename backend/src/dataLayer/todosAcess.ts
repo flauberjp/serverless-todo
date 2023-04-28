@@ -8,7 +8,8 @@ const XAWS = AWSXRay.captureAWS(AWS)
 
 const logger = createLogger('TodosAccess')
 
-// TODO: Implement the dataLayer logic
+const todosUserIdIndex = process.env.TODOS_USER_ID_INDEX
+logger.info(`todosUserIdIndex name: ${todosUserIdIndex}`)
 
 export class TodosAccess {
   constructor(
@@ -16,13 +17,18 @@ export class TodosAccess {
     private readonly todosTable = process.env.TODOS_TABLE
   ) {}
 
-  async getAllTodosItem(): Promise<TodoItem[]> {
-    logger.info("Getting all To-do's Item")
-    logger.info('todosTable', this.todosTable)
+  async getTodosForUser(userId: string): Promise<TodoItem[]> {
+    logger.info(`Get TODO items for user id: ${userId}`)
+    logger.info(`todosTable name: ${this.todosTable}`)
 
     const result = await this.docClient
-      .scan({
-        TableName: this.todosTable
+      .query({
+        TableName: this.todosTable,
+        IndexName: todosUserIdIndex,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: {
+          ':userId': userId
+        }
       })
       .promise()
     const items = result.Items
@@ -35,7 +41,7 @@ export class TodosAccess {
       .get({
         TableName: this.todosTable,
         Key: {
-          id: todoId
+          todoId: todoId
         }
       })
       .promise()
@@ -85,7 +91,7 @@ export class TodosAccess {
       .update({
         TableName: this.todosTable,
         Key: {
-          id: todoId
+          todoId: todoId
         },
         UpdateExpression: 'set #todoName = :n, duedate = :d, done = :r',
         ExpressionAttributeNames: {
@@ -110,7 +116,7 @@ export class TodosAccess {
       .delete({
         TableName: this.todosTable,
         Key: {
-          id: todoId
+          todoId: todoId
         }
       })
       .promise()

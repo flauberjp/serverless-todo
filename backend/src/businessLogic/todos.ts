@@ -19,10 +19,6 @@ export const s3 = new AWS.S3({
   signatureVersion: 'v4'
 })
 
-export async function getAllTodosItem(): Promise<TodoItem[]> {
-  return todosAccess.getAllTodosItem()
-}
-
 export async function getTodoItem(todoId: string): Promise<TodoItem> {
   return todosAccess.getTodoItem(todoId)
 }
@@ -75,8 +71,8 @@ export function createAttachmentPresignedUrl(imageName: string): string {
   return getUploadUrl(imageName)
 }
 
-export async function getTodosForUser() {
-  // TODO implement
+export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
+  return todosAccess.getTodosForUser(userId)
 }
 
 function getUploadUrl(key: string) {

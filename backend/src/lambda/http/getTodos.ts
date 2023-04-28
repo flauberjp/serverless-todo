@@ -4,16 +4,19 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 
-// import { getTodosForUser } from '../../businessLogic/todos'
-// import { getUserId } from '../utils'
-import { getAllTodosItem } from '../../businessLogic/todos'
+import { getTodosForUser } from '../../businessLogic/todos'
+import { getUserId } from '../utils'
+import { createLogger } from '../../utils/logger'
 
-// Get all TODO items for a current user
+const logger = createLogger('TodosAccess')
+
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('Processing event: ', event)
+    const userId = getUserId(event)
+    logger.info(`Get TODO items for user id: ${userId}`)
+    logger.info(`Event content:\n${JSON.stringify(event)}`)
 
-    const items = await getAllTodosItem()
+    const items = await getTodosForUser(userId)
 
     return {
       statusCode: 200,
