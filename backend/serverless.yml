@@ -133,7 +133,6 @@ resources:
         RestApiId:
           Ref: 'ApiGatewayRestApi'
 
-    # TODO: Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
