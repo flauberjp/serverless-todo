@@ -78,6 +78,33 @@ export class TodosAccess {
     return todoItem
   }
 
+  async updateTodoImgUrl(
+    userId: string,
+    todoId: string,
+    attachmentUrl: string
+  ): Promise<TodoItem> {
+    logger.info(
+      `Updating To-do Item with id ${todoId}. New field value: attachmentUrl=${attachmentUrl}`
+    )
+
+    await this.docClient
+      .update({
+        TableName: this.todosTable,
+        Key: {
+          userId: userId,
+          todoId: todoId
+        },
+        UpdateExpression: 'set attachmentUrl = :a',
+        ExpressionAttributeValues: {
+          ':a': attachmentUrl
+        }
+      })
+      .promise()
+
+    logger.info('To-do Item updated!')
+    return this.getTodoItem(userId, todoId)
+  }
+
   async updateTodoItem(
     userId: string,
     todoId: string,
