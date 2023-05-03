@@ -10,19 +10,22 @@ import {
 } from '../../businessLogic/todos'
 import { getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
+import { MetricPublisher } from '../../utils/metrics'
 
 const logger = createLogger('TodosAccess')
 const bucketName = process.env.ATTACHMENT_S3_BUCKET
+const metricPublisher = new MetricPublisher()
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     try {
+      metricPublisher.requestsCountMetricPublish('generateUploadUrlRequest')
       logger.info(`event ${JSON.stringify(event)}`)
       const todoId = event.pathParameters.todoId
       const userId = getUserId(event)
       const imageName = userId + '_' + todoId
 
-      const url = createAttachmentPresignedUrl(imageName)
+      const url = await createAttachmentPresignedUrl(imageName)
 
       updateTodoImgUrl(
         userId,

@@ -1,5 +1,5 @@
 import { TodosAccess } from '../dataLayer/todosAcess'
-// import { AttachmentUtils } from '../helpers/attachmentUtils'
+import { AttachmentUtils } from '../helpers/attachmentUtils'
 import { TodoItem } from '../models/TodoItem'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
@@ -12,8 +12,7 @@ import * as AWS from 'aws-sdk'
 const logger = createLogger('TodosAccess')
 
 const todosAccess = new TodosAccess()
-const bucketName = process.env.ATTACHMENT_S3_BUCKET
-const urlExpirationInSeconds = parseInt(process.env.SIGNED_URL_EXPIRATION)
+const attachmentUtils = new AttachmentUtils()
 
 export const s3 = new AWS.S3({
   signatureVersion: 'v4'
@@ -74,23 +73,13 @@ export async function deleteTodo(userId: string, todoId: string) {
   return await todosAccess.deleteTodoItem(userId, todoId)
 }
 
-export function createAttachmentPresignedUrl(imageName: string): string {
+export async function createAttachmentPresignedUrl(
+  imageName: string
+): Promise<string> {
   logger.debug('function: createAttachmentPresignedUrl')
-  return getUploadUrl(imageName)
+  return attachmentUtils.getUploadUrl(imageName)
 }
 
 export async function getTodosForUser(userId: string): Promise<TodoItem[]> {
   return todosAccess.getTodosForUser(userId)
-}
-
-function getUploadUrl(key: string) {
-  const param = {
-    Bucket: bucketName,
-    Key: key,
-    Expires: 60 * urlExpirationInSeconds
-  }
-
-  const url = s3.getSignedUrl('putObject', param)
-
-  return url
 }

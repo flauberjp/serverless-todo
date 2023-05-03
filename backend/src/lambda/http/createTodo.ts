@@ -6,11 +6,14 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { getUserId } from '../utils'
 import { createTodo } from '../../businessLogic/todos'
 import { createLogger } from '../../utils/logger'
+import { MetricPublisher } from '../../utils/metrics'
 
 const logger = createLogger('TodosAccess')
+const metricPublisher = new MetricPublisher()
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    metricPublisher.requestsCountMetricPublish('CreateTodoRequest')
     logger.info(`event: ${JSON.stringify(event)}`)
     const newTodo: CreateTodoRequest = JSON.parse(event.body)
     const userId = getUserId(event)

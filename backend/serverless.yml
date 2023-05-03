@@ -27,18 +27,14 @@ provider:
   logs:
     restApi: true
 
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - xray:PutTelemetryRecords
-            - xray:PutTraceSegments
-          Resource: '*'
-
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
   GetTodos:
     handler: src/lambda/http/getTodos.handler
@@ -54,6 +50,15 @@ functions:
           - dynamodb:Query
         Resource:
           - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/*
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: '*'
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
@@ -71,6 +76,15 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: '*'
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
   UpdateTodo:
     handler: src/lambda/http/updateTodo.handler
@@ -89,6 +103,15 @@ functions:
           - dynamodb:GetItem
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: '*'
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
@@ -104,6 +127,15 @@ functions:
           - dynamodb:GetItem
           - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: '*'
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
@@ -124,6 +156,15 @@ functions:
           - dynamodb:GetItem
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: '*'
+      - Effect: Allow
+        Action:
+          - cloudwatch:PutMetricData
+        Resource: '*'
 
 resources:
   Resources:

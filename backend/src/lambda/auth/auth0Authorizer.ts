@@ -7,12 +7,11 @@ import { createLogger } from '../../utils/logger'
 import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
 import { JwksClient } from 'jwks-rsa'
+import { MetricPublisher } from '../../utils/metrics'
 
 const logger = createLogger('auth')
+const metricPublisher = new MetricPublisher()
 
-// TODO: (DONE) Provide a URL that can be used to download a certificate that can be used
-// to verify JWT token signature.
-// To get this URL you need to go to an Auth0 page -> Show Advanced Settings -> Endpoints -> JSON Web Key Set
 const jwksUrl =
   'https://dev-gi7tpkcun11ksfq7.us.auth0.com/.well-known/jwks.json'
 
@@ -21,6 +20,7 @@ export const handler = async (
 ): Promise<CustomAuthorizerResult> => {
   logger.info('Authorizing a user', event.authorizationToken)
   try {
+    metricPublisher.authorizationsCountMetricPublish()
     const jwtToken = await verifyToken(event.authorizationToken)
     logger.info('User was authorized', jwtToken)
 

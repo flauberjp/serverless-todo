@@ -1,5 +1,3 @@
-import 'source-map-support/register'
-
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors, httpErrorHandler } from 'middy/middlewares'
@@ -12,11 +10,14 @@ import {
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
+import { MetricPublisher } from '../../utils/metrics'
 
 const logger = createLogger('TodosAccess')
+const metricPublisher = new MetricPublisher()
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    metricPublisher.requestsCountMetricPublish('updateTodoRequest')
     logger.info(`event: ${JSON.stringify(event)}`)
     const todoId = event.pathParameters.todoId
     const userId = getUserId(event)
